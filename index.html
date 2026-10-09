@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#08111d" />
+    <meta name="description" content="Explore greedy maximum-coverage Wi-Fi access point placement on an interactive campus floor plan." />
+    <title>Wi-Fi Placement Optimizer · DAA Studio</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./src/styles.css" />
+    <script type="module" src="./src/main.js"></script>
+  <meta property="og:type" content="website">
+		<meta property="og:url" content="https://wifiopt-bud7yf9u.manus.space/">
+		<meta property="og:title" content="Wi-Fi Placement Optimizer · DAA Studio">
+		<meta property="og:description" content="Explore greedy maximum-coverage Wi-Fi access point placement on an interactive campus floor plan.">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta name="twitter:title" content="Wi-Fi Placement Optimizer · DAA Studio">
+		<meta name="twitter:description" content="Explore greedy maximum-coverage Wi-Fi access point placement on an interactive campus floor plan."><link rel="canonical" href="https://wifiopt-bud7yf9u.manus.space/" /><link rel="manifest" href="/__manus/pwa/manifest.webmanifest" crossorigin="use-credentials" /></head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Wi-Fi Placement Optimizer home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none"><path d="M6 15.5a21.3 21.3 0 0 1 28 0M10.7 20a14.2 14.2 0 0 1 18.6 0M15.5 24.6a7 7 0 0 1 9 0" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/><circle cx="20" cy="30.5" r="2.2" fill="currentColor"/><path d="M20 3.5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".55"/></svg>
+          </span>
+          <span class="brand-copy"><strong>WIFI<span>OPT</span></strong><small>DAA · COVERAGE LAB</small></span>
+        </a>
+        <div class="topbar-right">
+          <span class="system-status"><i></i> ALGORITHM READY</span>
+          <span class="topbar-divider"></span>
+          <button class="nav-action" id="benchmark-open" type="button"><span class="nav-action-icon">↗</span> Benchmark</button>
+          <button class="nav-action theory-link" id="theory-open" type="button"><span class="nav-action-icon">⌘</span> Viva &amp; Theory</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro-row">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> ALGORITHM VISUALIZER <span class="eyebrow-id">/ 01</span></div>
+            <h1>Place fewer.<br /><em>Cover more.</em></h1>
+            <p class="intro-copy">A greedy approach to smarter Wi-Fi coverage.<br class="desktop-break" /> Set your floor plan, then watch each decision unfold.</p>
+          </div>
+          <div class="intro-equation" aria-label="Select locations maximizing classroom coverage subject to the access point budget">
+            <span class="equation-label">MAXIMUM COVERAGE</span>
+            <span class="equation-main">max&nbsp; |⋃ Cover(c)|</span>
+            <span class="equation-sub">s.t. &nbsp; |S| ≤ K &nbsp; · &nbsp; dist(c, r) ≤ R</span>
+          </div>
+        </section>
+
+        <section class="workspace" aria-label="Wi-Fi placement simulation workspace">
+          <aside class="panel controls-panel">
+            <div class="panel-heading"><div><span class="section-index">01 / CONFIGURE</span><h2>Floor plan</h2></div><span class="live-pip">LIVE</span></div>
+            <label class="field-label" for="preset-select">BUILDING PRESET</label>
+            <div class="select-wrap"><select id="preset-select" aria-label="Choose a building preset"></select><span>⌄</span></div>
+
+            <div class="separator"></div>
+            <div class="field-label mode-label">CANVAS TOOL <span id="tool-hint">Select a tool</span></div>
+            <div class="tool-group" role="group" aria-label="Canvas interaction mode">
+              <button class="tool-button active" data-tool="move" type="button" title="Move or drag rooms"><span class="tool-glyph">↔</span><span>Move</span></button>
+              <button class="tool-button" data-tool="add" type="button" title="Click canvas to add a room"><span class="tool-glyph">＋</span><span>Add room</span></button>
+              <button class="tool-button" data-tool="delete" type="button" title="Click a room to delete it"><span class="tool-glyph">−</span><span>Delete</span></button>
+            </div>
+            <p class="tool-helper" id="tool-helper">Drag a classroom to reposition it.</p>
+
+            <div class="separator"></div>
+            <div class="slider-head"><label class="field-label" for="budget-range">AP BUDGET <span class="symbol">K</span></label><output id="budget-output" for="budget-range">5</output></div>
+            <input id="budget-range" class="range-input" type="range" min="1" max="8" value="5" />
+            <div class="range-ends"><span>1 AP</span><span>8 APs</span></div>
+
+            <div class="slider-head radius-head"><label class="field-label" for="radius-range">COVERAGE RADIUS <span class="symbol">R</span></label><output id="radius-output" for="radius-range">140 px</output></div>
+            <input id="radius-range" class="range-input" type="range" min="75" max="220" step="5" value="140" />
+            <div class="range-ends"><span>75 px</span><span>220 px</span></div>
+
+            <div class="separator"></div>
+            <div class="field-label">CANDIDATE GRID</div>
+            <div class="density-options" id="density-options" role="group" aria-label="Candidate grid density">
+              <button type="button" class="density-button" data-density="coarse">Coarse</button>
+              <button type="button" class="density-button active" data-density="medium">Medium</button>
+              <button type="button" class="density-button" data-density="fine">Fine</button>
+            </div>
+            <div class="density-note"><span class="dot"></span><span id="candidate-count">Candidate points —</span></div>
+            <div class="controls-foot"><span class="keyboard-icon">⌖</span> <span id="coordinate-readout">X — &nbsp; Y —</span></div>
+          </aside>
+
+          <section class="panel canvas-panel" aria-labelledby="canvas-heading">
+            <div class="canvas-topline">
+              <div><span class="section-index">02 / SPATIAL MODEL</span><h2 id="canvas-heading">Campus blueprint</h2></div>
+              <div class="canvas-legend"><span><i class="legend-room"></i> Classroom</span><span><i class="legend-ap"></i> Access point</span></div>
+            </div>
+            <div class="canvas-frame" id="canvas-frame">
+              <div class="canvas-stamp"><span>FLOOR 01</span><span>NOT TO SCALE</span></div>
+              <canvas id="floorplan" width="960" height="600" aria-label="Interactive campus floor plan. Click or drag rooms according to the selected canvas tool."></canvas>
+              <div class="canvas-corner corner-tl"></div><div class="canvas-corner corner-tr"></div><div class="canvas-corner corner-bl"></div><div class="canvas-corner corner-br"></div>
+              <div class="canvas-scale"><span class="scale-line"></span><span>100 px</span></div>
+              <div class="canvas-instruction" id="canvas-instruction">Drag rooms to move · Choose Add room to place</div>
+            </div>
+            <div class="canvas-footer"><span><i class="status-dot"></i> <span id="canvas-state">Ready for optimization</span></span><span id="room-count-footer">0 ROOMS</span></div>
+            <div class="simulation-actions">
+              <button type="button" class="button-primary" id="run-button"><span class="play-icon">▶</span> Run optimization</button>
+              <button type="button" class="button-secondary" id="step-button"><span class="step-icon">▸▸</span> Step-by-step <span class="step-delay">900 ms</span></button>
+              <button type="button" class="button-reset" id="reset-button" title="Clear optimization result">↺</button>
+            </div>
+          </section>
+
+          <aside class="right-rail">
+            <section class="panel metrics-panel">
+              <div class="panel-heading compact"><div><span class="section-index">03 / RESULTS</span><h2>Coverage</h2></div><span class="metric-target">TARGET <b>100%</b></span></div>
+              <div class="coverage-display"><div class="coverage-ring" id="coverage-ring" role="img" aria-label="0 percent classroom coverage"><div><strong id="coverage-percent">0<span>%</span></strong><small>COVERED</small></div></div><div class="coverage-caption"><span class="coverage-main" id="coverage-line">Waiting for run</span><span class="coverage-sub" id="coverage-subline">Run the algorithm to see results</span></div></div>
+              <div class="metric-grid">
+                <div class="metric-cell"><span>CLASSROOMS</span><strong id="metric-total">0</strong></div>
+                <div class="metric-cell"><span>APs DEPLOYED</span><strong><b id="metric-used">0</b><small> / <span id="metric-budget">5</span></small></strong></div>
+                <div class="metric-cell"><span>NEWLY COVERED</span><strong class="positive" id="metric-covered">0</strong></div>
+                <div class="metric-cell"><span>UNCOVERED</span><strong class="negative" id="metric-uncovered">0</strong></div>
+              </div>
+              <div class="algorithm-note"><span class="note-mark">↳</span><span>Greedy selects the location with the <b>largest marginal gain</b> at every step.</span></div>
+            </section>
+            <section class="panel trace-panel">
+              <div class="panel-heading compact"><div><span class="section-index">04 / DECISION TRACE</span><h2>Greedy iterations</h2></div><span class="trace-count" id="trace-count">0 STEPS</span></div>
+              <div class="trace-list" id="trace-list"><div class="empty-trace"><span class="empty-graph">⌁</span><span>Your decisions will appear here.</span></div></div>
+              <div class="trace-foot"><span>Submodular · Diminishing returns</span><span>↗</span></div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="theory-strip" aria-label="Algorithm properties">
+          <div><span class="strip-label">PROBLEM CLASS</span><strong>NP-hard</strong></div><i></i>
+          <div><span class="strip-label">TIME COMPLEXITY</span><strong>O(K · M · N)</strong></div><i></i>
+          <div><span class="strip-label">SPACE COMPLEXITY</span><strong>O(M · N)</strong></div><i></i>
+          <div><span class="strip-label">APPROXIMATION BOUND</span><strong>(1 − 1/e) <em>≈ 63.2%</em></strong></div>
+          <button type="button" id="theory-inline">Explore the proof <span>↗</span></button>
+        </section>
+      </main>
+      <footer class="footer"><span>WIFI<span class="footer-accent">OPT</span> <i>·</i> ALGORITHMS IN SPACE</span><span>GREEDY MAXIMUM COVERAGE <i>·</i> DAA PROJECT EXPO</span></footer>
+    </div>
+
+    <div class="modal-backdrop hidden" id="benchmark-modal" role="dialog" aria-modal="true" aria-labelledby="benchmark-title">
+      <div class="modal-card benchmark-card">
+        <button class="modal-close" data-close type="button" aria-label="Close benchmark">×</button>
+        <div class="modal-kicker">EMPIRICAL EVALUATION / 20 TRIALS</div>
+        <h2 id="benchmark-title">Greedy vs. random.</h2>
+        <p class="modal-lead">Same floor plan. Same AP budget. Twenty random deployments, compared against greedy selection.</p>
+        <div id="benchmark-content" class="benchmark-content"></div>
+        <div class="modal-footnote">Random baseline samples candidate locations without replacement; results depend on the active radius and grid.</div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop hidden" id="theory-modal" role="dialog" aria-modal="true" aria-labelledby="theory-title">
+      <div class="modal-card theory-card">
+        <button class="modal-close" data-close type="button" aria-label="Close viva guide">×</button>
+        <div class="modal-kicker">EXAMINER NOTES / DAA PROJECT</div>
+        <h2 id="theory-title">The viva, decoded.</h2>
+        <p class="modal-lead">A compact defense guide to the model, algorithm, and its guarantees.</p>
+        <div class="theory-tabs" role="tablist" aria-label="Viva guide sections">
+          <button type="button" class="theory-tab active" data-tab="formulation">Formulation</button>
+          <button type="button" class="theory-tab" data-tab="pseudocode">Pseudocode</button>
+          <button type="button" class="theory-tab" data-tab="questions">Viva questions</button>
+        </div>
+        <div class="theory-content" id="theory-content"></div>
+      </div>
+    </div>
+  <manus-content-root></manus-content-root><script>
+			var __manus_space_editor_info = {
+			spaceId : 'bUd7YF9UN8aRhBrffQmPNt',
+			patchList : [],
+			hideBadge : false,
+			sessionId : 'HPkPtN8Z9LYdF3nm7lLuIL',
+			isWebDev : true,
+			usageStatus : 'UsageStatus_Unknown',
+			};
+			var __manus__global_env = {
+				apiHost: 'https://api.manus.im',
+				host: 'https://manus.im',
+				amplitudeKey: '46ac3f9abb41dd2d17a5785e052bc6d3',
+			};
+			</script><script src="https://files.manuscdn.com/manus-space-dispatcher/spaceEditor-Be_SD1Uu.js" async></script><script
+			defer
+			data-domain="manus.space"
+			src="https://plausible.io/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"
+		></script>
+		<script>
+			window.plausible =
+				window.plausible ||
+				function () {
+					(window.plausible.q = window.plausible.q || []).push(arguments);
+				};
+			plausible('custom-pageview', {
+			  props: {
+    			domain: window.location.host
+  			}
+			})
+		</script><script defer nonce="4a1b1c31-4698-4dec-b67c-e1484f34cbf4" src="https://manus-analytics.com/script.js" data-website-id="0ccac863-de13-46e2-8b15-c7f4f4009872"></script></body>
+</html>
